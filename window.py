@@ -1,5 +1,7 @@
 from tkinter import Tk, Button, Frame, filedialog, LEFT, RIGHT
-from PIL import Image, ImageTk
+from os import listdir
+from os.path import isfile, join, exists
+# from PIL import Image, ImageTk
 
 window = Tk()
 
@@ -11,30 +13,49 @@ WINDOW_HEIGHT = window.winfo_reqheight()  # int(SCREEN_HEIGHT * .8)
 
 # global variables
 selectedDirectory = None
+files = []
 currentImage = 0
 
 
+def loadImage():
+    pass
+
+
 def advanceImage():
-    if not selectedDirectory:
+    if selectedDirectory is None:
         return
     else:
         print("next")
 
 
 def prevImage():
-    if not selectedDirectory:
+    if selectedDirectory is None:
         return
     else:
         print("prev")
 
 
+# function to select a directory and makes sure that the directory contains at least 1 image file
 def chooseDirectory():
-    global selectedDirectory
+    global selectedDirectory, files
     selectedDirectory = filedialog.askdirectory()
+
+    if not exists(selectedDirectory):
+        print("path does not exist")
+        selectedDirectory = None
+        files = []
+        return
+
+    files = [file for file in listdir(selectedDirectory) if
+             isfile(join(selectedDirectory, file)) and file.endswith(('.png', '.jpg', '.jpeg'))]
+
+    if len(files) == 0:
+        selectedDirectory = None
+        files = []
+        print("no images found")
 
 
 def main():
-
     # setting window size to be 80% the size of the screen
     window.eval('tk::PlaceWindow . center')
 
